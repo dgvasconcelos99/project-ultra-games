@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { PublishersModule } from './publishers/publishers.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -5,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://dgvasconcelos99:Douglas1@cluster0.crksd5k.mongodb.net/',
+      `mongodb+srv://dgvasconcelos99:${process.env.NODE_DATABASE_PW}@cluster0.crksd5k.mongodb.net/`,
     ),
     PublishersModule,
   ],
