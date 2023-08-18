@@ -1,46 +1,38 @@
-import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
-import { Publisher, PublisherDocument } from './entities/publisher.entity';
+import { PublisherEntity } from './entities/publisher.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PublishersService {
   constructor(
-    @InjectModel(Publisher.name)
-    private publisherModel: Model<PublisherDocument>,
+    @InjectRepository(PublisherEntity)
+    private readonly publisherRepository: Repository<PublisherEntity>,
   ) {}
 
-  create(createPublisherDto: CreatePublisherDto) {
-    const publisher = new this.publisherModel(createPublisherDto);
-
-    return publisher.save();
+  async create(createPublisherData: CreatePublisherDto) {
+    return this.publisherRepository.save(createPublisherData);
   }
 
-  findAll() {
-    return this.publisherModel.find();
+  async findAll() {
+    return this.publisherRepository.find();
   }
 
-  findOne(id: string) {
-    return this.publisherModel.findById(id);
-  }
-
-  update(id: string, updatePublisherDto: UpdatePublisherDto) {
-    return this.publisherModel.findByIdAndUpdate(
-      {
-        _id: id,
+  async findOne(id: number) {
+    return this.publisherRepository.findOne({
+      where: {
+        id: id,
       },
-      {
-        $set: updatePublisherDto,
-      },
-      {
-        new: true,
-      },
-    );
+    });
   }
 
-  remove(id: string) {
-    return this.publisherModel.deleteOne({ _id: id }).exec();
+  async update(id: number, updatePublisherData: UpdatePublisherDto) {
+    return this.publisherRepository.update(id, updatePublisherData);
+  }
+
+  async remove(id: number) {
+    return this.publisherRepository.delete(id);
   }
 }

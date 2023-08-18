@@ -1,18 +1,31 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Document } from 'mongoose';
 
-export type PublisherDocument = Publisher & Document;
+export type PublisherDocument = PublisherEntity & Document;
 
-@Schema()
-export class Publisher {
-  @Prop({ required: true })
+@Entity({ name: 'publishers' })
+export class PublisherEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: number;
+
+  @Column({ nullable: false })
   name: string;
 
-  @Prop({ required: true })
+  @Column({ nullable: false })
   siret: number;
 
-  @Prop({ required: true })
-  phone: number;
-}
+  @Column({ nullable: false })
+  phone: string;
 
-export const PublisherSchema = SchemaFactory.createForClass(Publisher);
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: string;
+}
