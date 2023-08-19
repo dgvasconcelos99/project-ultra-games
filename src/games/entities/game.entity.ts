@@ -1,14 +1,30 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { PublisherEntity } from 'src/publishers/entities/publisher.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-export class Game {}
-
-@Schema()
+@Entity({ name: 'games' })
 export class Game {
-  @Prop({ required: true })
+  @PrimaryGeneratedColumn('uuid')
+  id: number;
+
+  @Column({ nullable: false })
   title: string;
 
-  @Prop({ required: true })
+  @Column({ nullable: false })
   price: number;
 
-  publisher: Publisher;
+  @OneToOne(() => PublisherEntity)
+  @JoinColumn()
+  publisher: PublisherEntity;
+
+  @Column()
+  tags: string[];
+
+  @Column({ nullable: false })
+  releaseDate: Date;
 }

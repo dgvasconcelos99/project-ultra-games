@@ -1,14 +1,13 @@
-FROM node:latest
+FROM node:18
 
-WORKDIR /usr/src/api
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
 
 COPY . .
-COPY ./.env.prod ./.env
 
-RUN yarn install --ignore-engines
+RUN npm run build
 
-RUN yarn build
-
-EXPOSE 3000
-
-CMD ["yarn", "start:prod"]
+CMD [ "npm", "run", "start:dev" ]

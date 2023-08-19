@@ -10,13 +10,16 @@ import {
 import { PublishersService } from './publishers.service';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
+import { Observable } from 'rxjs';
 
 @Controller('publishers')
 export class PublishersController {
   constructor(private readonly publishersService: PublishersService) {}
 
   @Post()
-  create(@Body() createPublisherDto: CreatePublisherDto) {
+  create(
+    @Body() createPublisherDto: CreatePublisherDto,
+  ): Observable<CreatePublisherDto> {
     return this.publishersService.create(createPublisherDto);
   }
 

@@ -4,6 +4,7 @@ import { UpdatePublisherDto } from './dto/update-publisher.dto';
 import { PublisherEntity } from './entities/publisher.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Observable, from } from 'rxjs';
 
 @Injectable()
 export class PublishersService {
@@ -12,8 +13,10 @@ export class PublishersService {
     private readonly publisherRepository: Repository<PublisherEntity>,
   ) {}
 
-  async create(createPublisherData: CreatePublisherDto) {
-    return this.publisherRepository.save(createPublisherData);
+  create(
+    createPublisherData: CreatePublisherDto,
+  ): Observable<CreatePublisherDto> {
+    return from(this.publisherRepository.save(createPublisherData));
   }
 
   async findAll() {

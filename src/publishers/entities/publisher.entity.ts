@@ -1,13 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Document } from 'mongoose';
-
-export type PublisherDocument = PublisherEntity & Document;
 
 @Entity({ name: 'publishers' })
 export class PublisherEntity {
@@ -23,7 +21,14 @@ export class PublisherEntity {
   @Column({ nullable: false })
   phone: string;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'created_at',
+  })
+  createdAt: string;
+
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: string;
 
   @DeleteDateColumn({ name: 'deleted_at' })
