@@ -3,7 +3,7 @@ import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
 import { PublisherEntity } from './entities/publisher.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Observable, from } from 'rxjs';
 
 @Injectable()
@@ -19,11 +19,11 @@ export class PublishersService {
     return from(this.publisherRepository.save(createPublisherData));
   }
 
-  async findAll() {
-    return this.publisherRepository.find();
+  findAll(): Observable<PublisherEntity[]> {
+    return from(this.publisherRepository.find());
   }
 
-  async findOne(id: number) {
+  findOne(id: string) {
     return this.publisherRepository.findOne({
       where: {
         id: id,
@@ -31,11 +31,14 @@ export class PublishersService {
     });
   }
 
-  async update(id: number, updatePublisherData: UpdatePublisherDto) {
-    return this.publisherRepository.update(id, updatePublisherData);
+  update(
+    id: string,
+    updatePublisherData: UpdatePublisherDto,
+  ): Observable<UpdateResult> {
+    return from(this.publisherRepository.update(id, updatePublisherData));
   }
 
-  async remove(id: number) {
-    return this.publisherRepository.delete(id);
+  remove(id: string): Observable<DeleteResult> {
+    return from(this.publisherRepository.delete(id));
   }
 }

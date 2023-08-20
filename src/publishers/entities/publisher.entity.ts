@@ -10,7 +10,7 @@ import {
 @Entity({ name: 'publishers' })
 export class PublisherEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   name: string;

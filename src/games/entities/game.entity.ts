@@ -3,14 +3,14 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'games' })
-export class Game {
+export class GameEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ nullable: false })
   title: string;
@@ -18,13 +18,13 @@ export class Game {
   @Column({ nullable: false })
   price: number;
 
-  @OneToOne(() => PublisherEntity)
+  @ManyToOne(() => PublisherEntity)
   @JoinColumn()
   publisher: PublisherEntity;
 
-  @Column()
+  @Column('text', { array: true, default: '{}' })
   tags: string[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'date' })
   releaseDate: Date;
 }

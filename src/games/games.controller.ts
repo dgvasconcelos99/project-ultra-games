@@ -16,8 +16,8 @@ export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
   @Post()
-  create(@Body() createGameDto: CreateGameDto) {
-    return this.gamesService.create(createGameDto);
+  create(@Body() createGameData: CreateGameDto) {
+    return this.gamesService.create(createGameData);
   }
 
   @Get()
@@ -27,16 +27,16 @@ export class GamesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.gamesService.findOne(+id);
+    return this.gamesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-    return this.gamesService.update(+id, updateGameDto);
+    return this.gamesService.update(id, updateGameDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.gamesService.remove(+id);
+    return this.gamesService.remove(id);
   }
 }
