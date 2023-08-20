@@ -1,6 +1,7 @@
 import { PublisherEntity } from 'src/publishers/entities/publisher.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -27,4 +28,7 @@ export class GameEntity {
 
   @Column({ nullable: false, type: 'date' })
   releaseDate: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: false })
+  deletedAt?: string;
 }

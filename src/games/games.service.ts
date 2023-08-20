@@ -1,30 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GameEntity } from './entities/game.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { Observable, from } from 'rxjs';
-import { PublisherEntity } from 'src/publishers/entities/publisher.entity';
+import { PublishersService } from 'src/publishers/publishers.service';
 
 @Injectable()
 export class GamesService {
   constructor(
     @InjectRepository(GameEntity)
     private readonly gameRepository: Repository<GameEntity>,
-    @InjectRepository(PublisherEntity)
-    private readonly publisherRepository: Repository<PublisherEntity>,
+    @Inject(PublishersService)
+    private readonly publisherService: PublishersService,
   ) {}
-  async create(createGameData: CreateGameDto): Promise<CreateGameDto> {
-    const searchPublisher = await this.publisherRepository.findOne({
-      where: {
-        id: createGameData.publisherId,
-      },
-    });
+  async create(createGameData: CreateGameDto): Promise<GameEntity> {
+    console.log(createGameData);
+    const searchPublisher = await this.publisherService.findOne(
+      createGameData.publisherId,
+    );
 
     if (!searchPublisher.id) throw new NotFoundException();
 
-    const dataToCreate = {
+    const dataToCreate: GameEntity = {
       ...createGameData,
       publisher: searchPublisher,
     };
@@ -32,25 +30,26 @@ export class GamesService {
     return this.gameRepository.save(dataToCreate);
   }
 
-  findAll(): Observable<GameEntity[]> {
-    return from(this.gameRepository.find());
+  async findAll(): Promise<GameEntity[]> {
+    return await this.gameRepository.find();
   }
 
-  findOne(id: string): Observable<GameEntity> {
-    return from(
-      this.gameRepository.findOne({
-        where: {
-          id: id,
-        },
-      }),
-    );
+  async findOne(id: string): Promise<GameEntity> {
+    return await this.gameRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: string, updateGameData: UpdateGameDto): Observable<UpdateResult> {
-    return from(this.gameRepository.update(id, updateGameData));
+  async update(
+    id: string,
+    updateGameData: UpdateGameDto,
+  ): Promise<UpdateResult> {
+    return await this.gameRepository.update(id, updateGameData);
   }
 
-  remove(id: string): Observable<DeleteResult> {
-    return from(this.gameRepository.delete(id));
+  async remove(id: string): Promise<DeleteResult> {
+    return await this.gameRepository.delete(id);
   }
 }

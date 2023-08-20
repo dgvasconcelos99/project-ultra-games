@@ -4,7 +4,6 @@ import { UpdatePublisherDto } from './dto/update-publisher.dto';
 import { PublisherEntity } from './entities/publisher.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { Observable, from } from 'rxjs';
 
 @Injectable()
 export class PublishersService {
@@ -13,32 +12,32 @@ export class PublishersService {
     private readonly publisherRepository: Repository<PublisherEntity>,
   ) {}
 
-  create(
+  async create(
     createPublisherData: CreatePublisherDto,
-  ): Observable<CreatePublisherDto> {
-    return from(this.publisherRepository.save(createPublisherData));
+  ): Promise<CreatePublisherDto> {
+    return this.publisherRepository.save(createPublisherData);
   }
 
-  findAll(): Observable<PublisherEntity[]> {
-    return from(this.publisherRepository.find());
+  async findAll(): Promise<PublisherEntity[]> {
+    return this.publisherRepository.find();
   }
 
-  findOne(id: string) {
-    return this.publisherRepository.findOne({
+  async findOne(id: string) {
+    return await this.publisherRepository.findOne({
       where: {
-        id: id,
+        id,
       },
     });
   }
 
-  update(
+  async update(
     id: string,
     updatePublisherData: UpdatePublisherDto,
-  ): Observable<UpdateResult> {
-    return from(this.publisherRepository.update(id, updatePublisherData));
+  ): Promise<UpdateResult> {
+    return await this.publisherRepository.update(id, updatePublisherData);
   }
 
-  remove(id: string): Observable<DeleteResult> {
-    return from(this.publisherRepository.delete(id));
+  async remove(id: string): Promise<DeleteResult> {
+    return await this.publisherRepository.delete(id);
   }
 }
