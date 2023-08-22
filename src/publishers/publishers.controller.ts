@@ -51,6 +51,16 @@ export class PublishersController {
     }
   }
 
+  @Get('/gameName/:name')
+  findByGame(@Param('name') name: string): Promise<PublisherEntity> {
+    try {
+      return this.publishersService.findByGame(name);
+    } catch (err) {
+      console.log(err);
+      error(format(err, 'PublishersController->FindByGame'));
+    }
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

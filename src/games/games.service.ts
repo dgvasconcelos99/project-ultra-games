@@ -1,4 +1,9 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,11 +16,10 @@ export class GamesService {
   constructor(
     @InjectRepository(GameEntity)
     private readonly gameRepository: Repository<GameEntity>,
-    @Inject(PublishersService)
+    @Inject(forwardRef(() => PublishersService))
     private readonly publisherService: PublishersService,
   ) {}
   async create(createGameData: CreateGameDto): Promise<GameEntity> {
-    console.log(createGameData);
     const searchPublisher = await this.publisherService.findOne(
       createGameData.publisherId,
     );
@@ -24,6 +28,7 @@ export class GamesService {
 
     const dataToCreate: GameEntity = {
       ...createGameData,
+      releaseDate: new Date(createGameData.releaseDate),
       publisher: searchPublisher,
     };
 

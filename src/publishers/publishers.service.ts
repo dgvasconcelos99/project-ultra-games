@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
 import { PublisherEntity } from './entities/publisher.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { GamesService } from 'src/games/games.service';
+import { GamesModule } from 'src/games/games.module';
 
 @Injectable()
 export class PublishersService {
   constructor(
     @InjectRepository(PublisherEntity)
     private readonly publisherRepository: Repository<PublisherEntity>,
+    @Inject(forwardRef(() => GamesService))
+    private readonly gameService: Repository<GamesModule>,
   ) {}
 
   async create(
@@ -28,6 +32,16 @@ export class PublishersService {
         id,
       },
     });
+  }
+
+  async findByGame(name: string): Promise<any> {
+    const searchGame = await this.gameService
+      .createQueryBuilder()
+      .where(`title LIKE %${name}%`)
+      .getOne();
+
+    console.log({ searchGame });
+    return searchGame;
   }
 
   async update(
