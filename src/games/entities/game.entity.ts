@@ -16,7 +16,7 @@ export class GameEntity {
   @Column({ nullable: false })
   title: string;
 
-  @Column({ nullable: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
 
   @ManyToOne(() => PublisherEntity)

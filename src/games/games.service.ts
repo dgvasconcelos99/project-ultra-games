@@ -8,7 +8,13 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GameEntity } from './entities/game.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import {
+  Between,
+  DeleteResult,
+  LessThanOrEqual,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { PublishersService } from 'src/publishers/publishers.service';
 
 @Injectable()
@@ -56,5 +62,25 @@ export class GamesService {
 
   async remove(id: string): Promise<DeleteResult> {
     return await this.gameRepository.delete(id);
+  }
+
+  async handleDeprecatedGames(): Promise<void> {
+    const currentDate = new Date();
+    const eighteenMonthsAgo = new Date();
+    eighteenMonthsAgo.setMonth(currentDate.getMonth() - 18);
+
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12);
+
+    await this.gameRepository.softDelete({
+      releaseDate: LessThanOrEqual(eighteenMonthsAgo),
+    });
+
+    await this.gameRepository.update(
+      { releaseDate: Between(twelveMonthsAgo, eighteenMonthsAgo) },
+      { price: () => 'price * 0.8' },
+    );
+
+    return;
   }
 }

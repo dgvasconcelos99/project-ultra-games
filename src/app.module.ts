@@ -4,7 +4,8 @@ import { PublishersModule } from './publishers/publishers.module';
 import { GamesModule } from './games/games.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { DataSource } from 'typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronjobsModule } from './cronjobs/cronjobs.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { DataSource } from 'typeorm';
       isGlobal: true,
       envFilePath: '.env.develop',
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.NODE_DATABASE_HOST,
@@ -25,10 +27,9 @@ import { DataSource } from 'typeorm';
     }),
     PublishersModule,
     GamesModule,
+    CronjobsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {
-  constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}

@@ -40,7 +40,6 @@ export class PublishersService {
       .where(`title LIKE %${name}%`)
       .getOne();
 
-    console.log({ searchGame });
     return searchGame;
   }
 
