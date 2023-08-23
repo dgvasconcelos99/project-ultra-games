@@ -1,19 +1,18 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
 import { UpdatePublisherDto } from './dto/update-publisher.dto';
 import { PublisherEntity } from './entities/publisher.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { GamesService } from 'src/games/games.service';
-import { GamesModule } from 'src/games/games.module';
 
 @Injectable()
 export class PublishersService {
   constructor(
     @InjectRepository(PublisherEntity)
     private readonly publisherRepository: Repository<PublisherEntity>,
-    @Inject(forwardRef(() => GamesService))
-    private readonly gameService: Repository<GamesModule>,
+    @Inject(GamesService)
+    private readonly gameService: GamesService,
   ) {}
 
   async create(
@@ -34,13 +33,18 @@ export class PublishersService {
     });
   }
 
-  async findByGame(name: string): Promise<any> {
-    const searchGame = await this.gameService
-      .createQueryBuilder()
-      .where(`title LIKE %${name}%`)
-      .getOne();
+  async findByGame(name: string): Promise<PublisherEntity> {
+    const searchGame = await this.gameService.findByName(name);
 
-    return searchGame;
+    if (!searchGame[0]) {
+      throw new HttpException('No games found', HttpStatus.NOT_FOUND);
+    }
+
+    const searchPublisher = await this.publisherRepository.findOne({
+      where: { id: searchGame[0].games_publisherId.id },
+    });
+
+    return searchPublisher;
   }
 
   async update(

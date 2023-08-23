@@ -12,6 +12,7 @@ import {
   Between,
   DeleteResult,
   LessThanOrEqual,
+  Like,
   Repository,
   UpdateResult,
 } from 'typeorm';
@@ -51,6 +52,17 @@ export class GamesService {
         id: id,
       },
     });
+  }
+
+  async findByName(name: string): Promise<GameEntity> {
+    const searchGame = await this.gameRepository
+      .createQueryBuilder('games')
+      .where({
+        title: Like(`%${name}%`),
+      })
+      .withDeleted()
+      .execute();
+    return searchGame;
   }
 
   async update(

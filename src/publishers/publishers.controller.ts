@@ -51,8 +51,9 @@ export class PublishersController {
     }
   }
 
-  @Get('/gameName/:name')
-  findByGame(@Param('name') name: string): Promise<PublisherEntity> {
+  @Get('findBy/game')
+  findByGame(@Body('name') name: string): Promise<PublisherEntity> {
+    console.log(name);
     try {
       return this.publishersService.findByGame(name);
     } catch (err) {
